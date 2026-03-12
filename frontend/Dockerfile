@@ -6,7 +6,9 @@ COPY package.json ./
 RUN npm install --silent
 
 COPY . .
-RUN npm run build
+# Vite handles TS transpilation; cap heap for Raspberry Pi
+ENV NODE_OPTIONS=--max-old-space-size=768
+RUN npx vite build
 
 # ── Stage 2: Serve with nginx ─────────────────────────────────────────────────
 FROM nginx:1.25-alpine AS production
