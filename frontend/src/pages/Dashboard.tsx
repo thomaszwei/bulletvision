@@ -1,4 +1,5 @@
-﻿import { Link } from "react-router-dom";
+﻿import React from "react";
+import { Link } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import { Crosshair, Plus, Trophy, Activity } from "lucide-react";
 import { sessionsApi } from "@/api/sessions";
@@ -51,7 +52,7 @@ export default function Dashboard() {
         <StatCard
           label={t("dashboard.topScore")}
           value={String(highscores?.[0]?.total_score ?? 0)}
-          sub={highscores?.[0]?.player_name ?? "â€”"}
+          sub={highscores?.[0]?.player_name ?? "\u2014"}
           icon={<Trophy size={18} />}
         />
       </div>
@@ -108,5 +109,41 @@ export default function Dashboard() {
         </div>
       </div>
     </div>
+  );
+}
+
+function StatCard({
+  label, value, sub, icon, accent = "text-white",
+}: {
+  label: string;
+  value: string;
+  sub: string;
+  icon: React.ReactNode;
+  accent?: string;
+}) {
+  return (
+    <div className="card flex flex-col gap-2">
+      <div className="flex items-center justify-between text-gray-400">
+        <span className="text-xs uppercase tracking-wide">{label}</span>
+        {icon}
+      </div>
+      <p className={`text-2xl font-bold ${accent}`}>{value}</p>
+      <p className="text-xs text-gray-500 truncate">{sub}</p>
+    </div>
+  );
+}
+
+const STATUS_COLORS: Record<string, string> = {
+  active: "bg-confirm/10 text-confirm",
+  pending: "bg-warn/10 text-warn",
+  paused: "bg-brand/10 text-brand",
+  ended: "bg-surface-elevated text-gray-400",
+};
+
+function StatusBadge({ status }: { status: string }) {
+  return (
+    <span className={`px-2 py-0.5 rounded-full text-xs font-medium ${STATUS_COLORS[status] ?? "bg-surface-elevated text-gray-400"}`}>
+      {status}
+    </span>
   );
 }
