@@ -13,18 +13,20 @@ export default defineConfig({
     host: "0.0.0.0",
     port: 5173,
     proxy: {
-      // In dev mode, proxy API calls to the backend container
+      // In dev mode, proxy API calls to the backend container.
+      // BACKEND_URL is a server-side env var (no VITE_ prefix) so it
+      // never gets embedded in the browser bundle.
       "/api": {
-        target: process.env.VITE_API_BASE_URL || "http://localhost:8000",
+        target: process.env.BACKEND_URL || "http://backend:8000",
         changeOrigin: true,
       },
       "/ws": {
-        target: process.env.VITE_API_BASE_URL || "http://localhost:8000",
+        target: process.env.BACKEND_URL || "http://backend:8000",
         changeOrigin: true,
         ws: true,
       },
       "/snapshots": {
-        target: process.env.VITE_API_BASE_URL || "http://localhost:8000",
+        target: process.env.BACKEND_URL || "http://backend:8000",
         changeOrigin: true,
       },
     },

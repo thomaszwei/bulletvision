@@ -10,20 +10,22 @@ import {
   Sliders,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
-
-const NAV_ITEMS = [
-  { to: "/", icon: LayoutDashboard, label: "Dashboard" },
-  { to: "/session", icon: Crosshair, label: "Live Session" },
-  { to: "/players", icon: Users, label: "Players" },
-  { to: "/highscores", icon: Trophy, label: "Highscores" },
-  { to: "/history", icon: History, label: "History" },
-  { to: "/calibration", icon: Sliders, label: "Calibration" },
-  { to: "/settings", icon: Settings, label: "Settings" },
-  { to: "/help", icon: HelpCircle, label: "Help" },
-];
+import { useTranslation } from "react-i18next";
 
 export function Sidebar() {
   const location = useLocation();
+  const { t } = useTranslation();
+
+  const NAV_ITEMS = [
+    { to: "/", icon: LayoutDashboard, label: t("nav.dashboard") },
+    { to: "/session", icon: Crosshair, label: t("nav.liveSession") },
+    { to: "/players", icon: Users, label: t("nav.players") },
+    { to: "/highscores", icon: Trophy, label: t("nav.highscores") },
+    { to: "/history", icon: History, label: t("nav.history") },
+    { to: "/calibration", icon: Sliders, label: t("nav.calibration") },
+    { to: "/settings", icon: Settings, label: t("nav.settings") },
+    { to: "/help", icon: HelpCircle, label: t("nav.help") },
+  ];
 
   return (
     <aside className="hidden md:flex flex-col w-56 min-h-screen bg-surface-card border-r border-surface-border shrink-0">
