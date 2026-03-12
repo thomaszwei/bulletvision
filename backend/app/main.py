@@ -56,6 +56,10 @@ async def lifespan(app: FastAPI):
 
     # ── Shutdown ──────────────────────────────────────────────────────────────
     logger.info("BulletVision shutting down…")
+    # Cancel any running detection loop task first
+    from app.services.detection_service import stop_detection_loop
+    stop_detection_loop()
+    # Then stop the camera thread
     from app.services.camera_service import camera_service
     await camera_service.stop()
 

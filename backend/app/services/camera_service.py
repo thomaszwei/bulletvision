@@ -211,7 +211,7 @@ class CameraService:
         boundary = b"--bulletframe"
         target_interval = 1.0 / max(settings.detection_fps, 1)
         while True:
-            t0 = asyncio.get_event_loop().time()
+            t0 = asyncio.get_running_loop().time()
             frame = self.get_frame()
             if frame is not None:
                 _, jpg = cv2.imencode(
@@ -239,7 +239,7 @@ class CameraService:
                     + jpg_bytes + b"\r\n"
                 )
 
-            elapsed = asyncio.get_event_loop().time() - t0
+            elapsed = asyncio.get_running_loop().time() - t0
             sleep = max(0.0, target_interval - elapsed)
             await asyncio.sleep(sleep)
 

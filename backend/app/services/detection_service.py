@@ -71,7 +71,7 @@ def remove_confirmed_circle(session_id: int, px: float, py: float) -> None:
 def start_detection_loop(session_id: int) -> None:
     global _active_session_id, _detection_task
     _active_session_id = session_id
-    loop = asyncio.get_event_loop()
+    loop = asyncio.get_running_loop()
     if _detection_task and not _detection_task.done():
         _detection_task.cancel()
     _detection_task = loop.create_task(
@@ -102,7 +102,7 @@ async def _detection_loop(session_id: int) -> None:
     logger.info(f"Detection loop running at {settings.detection_fps} FPS")
 
     while True:
-        t0 = asyncio.get_event_loop().time()
+        t0 = asyncio.get_running_loop().time()
 
         baseline = _baselines.get(session_id)
         if baseline is None:
@@ -176,7 +176,7 @@ async def _detection_loop(session_id: int) -> None:
             except Exception as exc:
                 logger.exception(f"Error persisting detection: {exc}")
 
-        elapsed = asyncio.get_event_loop().time() - t0
+        elapsed = asyncio.get_running_loop().time() - t0
         await asyncio.sleep(max(0.0, interval - elapsed))
 
 
