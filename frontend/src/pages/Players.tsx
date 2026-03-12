@@ -142,8 +142,9 @@ function PlayerModal({ player, onClose, onSave }: { player?: Player; onClose: ()
         await playersApi.create({ name, avatar_color: color });
       }
       onSave();
-    } catch {
-      setError(t("players.saveError"));
+    } catch (err: unknown) {
+      const detail = (err as { response?: { data?: { detail?: string } } })?.response?.data?.detail;
+      setError(detail ? String(detail) : t("players.saveError"));
     } finally {
       setSaving(false);
     }

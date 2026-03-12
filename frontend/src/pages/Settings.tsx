@@ -16,16 +16,17 @@ interface SettingMeta {
 }
 
 const SETTING_METAS: SettingMeta[] = [
-  { key: "confidence_threshold", type: "number", min: 0.1, max: 0.99, step: 0.01, group: "Detection" },
-  { key: "min_area", type: "number", min: 10, max: 5000, step: 10, group: "Detection" },
-  { key: "max_area", type: "number", min: 100, max: 50000, step: 100, group: "Detection" },
+  { key: "detection_confidence_threshold", type: "number", min: 0.1, max: 0.99, step: 0.01, group: "Detection" },
+  { key: "detection_min_area", type: "number", min: 10, max: 5000, step: 10, group: "Detection" },
+  { key: "detection_max_area", type: "number", min: 100, max: 50000, step: 100, group: "Detection" },
+  { key: "detection_circularity", type: "number", min: 0.05, max: 0.99, step: 0.01, group: "Detection" },
+  { key: "detection_darkness_threshold", type: "number", min: 0, max: 255, step: 1, group: "Detection" },
+  { key: "detection_alignment_enabled", type: "boolean", group: "Detection" },
   { key: "detection_fps", type: "number", min: 1, max: 10, step: 1, group: "Detection" },
-  { key: "morph_kernel_size", type: "number", min: 3, max: 21, step: 2, group: "Detection" },
   { key: "camera_width", type: "number", min: 320, max: 1920, step: 32, group: "Camera" },
   { key: "camera_height", type: "number", min: 240, max: 1080, step: 24, group: "Camera" },
-  { key: "demo_mode", type: "boolean", group: "Camera" },
-  { key: "points_per_hit", type: "number", min: 1, max: 100, step: 1, group: "Scoring" },
-  { key: "bull_multiplier", type: "number", min: 1, max: 10, step: 0.5, group: "Scoring" },
+  { key: "points_per_hole", type: "number", min: 1, max: 100, step: 1, group: "Scoring" },
+  { key: "zone_scoring_enabled", type: "boolean", group: "Scoring" },
 ];
 
 const GROUPS = [...new Set(SETTING_METAS.map((m) => m.group))];

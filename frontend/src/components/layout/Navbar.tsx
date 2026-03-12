@@ -12,8 +12,13 @@ export function Navbar() {
     refetchInterval: 10_000,
   });
 
-  const toggleLang = () =>
-    i18n.changeLanguage(i18n.language === "de" ? "en" : "de");
+  const toggleLang = () => {
+    // resolvedLanguage handles "de-DE" → "de" matching
+    const current = i18n.resolvedLanguage ?? i18n.language;
+    i18n.changeLanguage(current.startsWith("de") ? "en" : "de");
+  };
+
+  const isDE = (i18n.resolvedLanguage ?? i18n.language).startsWith("de");
 
   return (
     <header className="flex items-center justify-between h-14 px-5 border-b border-surface-border bg-surface-card shrink-0">
@@ -41,10 +46,10 @@ export function Navbar() {
         {/* Language switcher */}
         <button
           onClick={toggleLang}
-          className="flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-medium bg-surface-elevated hover:bg-surface-border text-gray-400 hover:text-white transition-colors"
-          title={i18n.language === "de" ? "Switch to English" : "Zu Deutsch wechseln"}
+          className="flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-semibold border border-surface-border bg-surface-elevated hover:bg-brand/20 hover:border-brand hover:text-white text-gray-300 transition-colors"
+          title={isDE ? "Switch to English" : "Zu Deutsch wechseln"}
         >
-          {i18n.language === "de" ? "🇬🇧 EN" : "🇩🇪 DE"}
+          {isDE ? "🇬🇧 EN" : "🇩🇪 DE"}
         </button>
       </div>
     </header>
