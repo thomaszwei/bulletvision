@@ -7,7 +7,7 @@ RUN npm install
 
 COPY . .
 # Vite handles TS transpilation; cap heap for Raspberry Pi
-ENV NODE_OPTIONS=--max-old-space-size=768
+ENV NODE_OPTIONS=--max-old-space-size=1024
 RUN ./node_modules/.bin/vite build
 
 # ── Stage 2: Serve with nginx ─────────────────────────────────────────────────

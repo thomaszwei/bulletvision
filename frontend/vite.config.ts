@@ -34,18 +34,7 @@ export default defineConfig({
   build: {
     outDir: "dist",
     sourcemap: false,
-    rollupOptions: {
-      output: {
-        manualChunks: {
-          vendor: ["react", "react-dom", "react-router-dom"],
-          query: ["@tanstack/react-query"],
-          radix: [
-            "@radix-ui/react-dialog",
-            "@radix-ui/react-toast",
-            "@radix-ui/react-tabs",
-          ],
-        },
-      },
-    },
+    rollupOptions: {},
+    chunkSizeWarningLimit: 1000,
   },
 });
