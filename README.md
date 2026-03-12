@@ -15,7 +15,7 @@ Self-hosted Raspberry Pi web application that uses the Pi camera to **detect new
 ### 1. Clone & configure
 
 ```bash
-git clone https://github.com/yourname/bulletvision.git
+git clone https://github.com/thomaszwei/bulletvision.git
 cd bulletvision
 cp .env.example .env
 # Edit .env — set CAMERA_BACKEND, SECRET_KEY, etc.
