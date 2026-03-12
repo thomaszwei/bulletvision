@@ -1,8 +1,8 @@
 FROM node:20-alpine
 WORKDIR /app
 
-COPY package.json package-lock.json* ./
-RUN npm ci --silent
+COPY package.json ./
+RUN npm install --silent
 
 # Source is mounted as a volume at runtime (see docker-compose.dev.yml)
 EXPOSE 5173
