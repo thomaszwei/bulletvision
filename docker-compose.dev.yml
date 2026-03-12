@@ -1,0 +1,48 @@
+version: "3.9"
+
+# ─────────────────────────────────────────────────────────────────────────────
+# BulletVision — Development Override
+# Usage:  docker compose -f docker-compose.yml -f docker-compose.dev.yml up
+#
+# Changes vs production:
+#   - Backend: hot-reload via uvicorn --reload, source mounted as volume
+#   - Frontend: Vite dev server with HMR instead of nginx-served build
+#   - Ports exposed directly for easier debugging
+#   - nginx proxy forwards /api and /ws to backend; / to Vite dev server
+# ─────────────────────────────────────────────────────────────────────────────
+
+services:
+
+  backend:
+    build:
+      context: ./backend
+      target: development
+    volumes:
+      - ./backend/app:/app/app          # hot-reload source
+      - ./data:/app/data
+    command: uvicorn app.main:app --host 0.0.0.0 --port 8000 --reload --log-level debug
+    ports:
+      - "8000:8000"                      # direct access for testing
+    environment:
+      - DEMO_MODE=true                   # use sample frames if no camera on dev machine
+      - DATABASE_URL=sqlite:////app/data/db/bulletvision_dev.db
+
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile.dev
+    volumes:
+      - ./frontend/src:/app/src
+      - ./frontend/public:/app/public
+      - /app/node_modules                # keep container's node_modules
+    ports:
+      - "5173:5173"
+    environment:
+      - VITE_API_BASE_URL=http://localhost:8000
+    command: npm run dev -- --host 0.0.0.0
+
+  nginx:
+    volumes:
+      - ./nginx/nginx.dev.conf:/etc/nginx/nginx.conf:ro
+    ports:
+      - "80:80"
