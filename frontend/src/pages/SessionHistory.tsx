@@ -134,9 +134,3 @@ function SessionRow({ session: s, onOpen }: { session: Session; onOpen: () => vo
   );
 }
 
-const STATUS_COLORS: Record<string, string> = {
-  active: "badge-active",
-  pending: "badge-pending",
-  ended: "badge-ended",
-  paused: "badge-pending",
-};

@@ -191,7 +191,3 @@ function PlayerModal({ player, onClose, onSave }: { player?: Player; onClose: ()
   );
 }
 
-const COLORS = [
-  "#EF4444", "#F97316", "#EAB308", "#22C55E",
-  "#06B6D4", "#6366F1", "#A855F7", "#EC4899",
-];

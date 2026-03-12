@@ -165,31 +165,3 @@ function SettingRow({
   );
 }
 
-interface SettingMeta {
-  key: string;
-  label: string;
-  description: string;
-  type: "number" | "boolean" | "string";
-  min?: number;
-  max?: number;
-  step?: number;
-  group: string;
-}
-
-const SETTING_METAS: SettingMeta[] = [
-  // Detection
-  { key: "confidence_threshold", label: "Confidence Threshold", description: "Minimum confidence to report a detection (0â€“1)", type: "number", min: 0.1, max: 0.99, step: 0.01, group: "Detection" },
-  { key: "min_area", label: "Min Contour Area (pxÂ²)", description: "Smallest contour area counted as a hole", type: "number", min: 10, max: 5000, step: 10, group: "Detection" },
-  { key: "max_area", label: "Max Contour Area (pxÂ²)", description: "Largest contour area counted as a hole", type: "number", min: 100, max: 50000, step: 100, group: "Detection" },
-  { key: "detection_fps", label: "Detection FPS", description: "Frames per second to analyse (1â€“10)", type: "number", min: 1, max: 10, step: 1, group: "Detection" },
-  { key: "morph_kernel_size", label: "Morphology Kernel", description: "Morphological op kernel size (odd number)", type: "number", min: 3, max: 21, step: 2, group: "Detection" },
-  // Camera
-  { key: "camera_width", label: "Frame Width", description: "Camera capture width in pixels", type: "number", min: 320, max: 1920, step: 32, group: "Camera" },
-  { key: "camera_height", label: "Frame Height", description: "Camera capture height in pixels", type: "number", min: 240, max: 1080, step: 24, group: "Camera" },
-  { key: "demo_mode", label: "Demo Mode", description: "Use synthetic frames instead of real camera", type: "boolean", group: "Camera" },
-  // Scoring
-  { key: "points_per_hit", label: "Points per Hit", description: "Base points awarded for a confirmed hit", type: "number", min: 1, max: 100, step: 1, group: "Scoring" },
-  { key: "bull_multiplier", label: "Bull Multiplier", description: "Score multiplier for centre-zone hits", type: "number", min: 1, max: 10, step: 0.5, group: "Scoring" },
-];
-
-const GROUPS = [...new Set(SETTING_METAS.map((m) => m.group))];
