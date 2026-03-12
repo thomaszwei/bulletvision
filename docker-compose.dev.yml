@@ -32,13 +32,12 @@ services:
       context: ./frontend
       dockerfile: Dockerfile.dev
     volumes:
-      - ./frontend/src:/app/src
-      - ./frontend/public:/app/public
+      - ./frontend:/app                  # mount entire frontend for index.html, configs, etc.
       - /app/node_modules                # keep container's node_modules
     ports:
       - "5173:5173"
     environment:
-      - VITE_API_BASE_URL=http://localhost:8000
+      - VITE_API_BASE_URL=http://backend:8000
     command: npm run dev -- --host 0.0.0.0
 
   nginx:
