@@ -34,7 +34,7 @@ const de = {
     demo: " · Demo",
     baselineActive: "Basisbild aktiv",
     noBaseline: "Kein Basisbild aufgenommen",
-    noBaselineHint: "„Basisbild aufnehmen" drücken, um Erkennung zu starten",
+    noBaselineHint: `„Basisbild aufnehmen" drücken, um Erkennung zu starten`,
   },
   dashboard: {
     title: "Übersicht",
@@ -210,7 +210,7 @@ const de = {
         intro: "Drei Sitzungsmodi:",
         modes: [
           { name: "Freies Spiel", desc: "Alle Spieler schießen gleichzeitig. Bestätigte Treffer werden dem aktiven Spieler gutgeschrieben." },
-          { name: "Rundenbasiert", desc: "Spieler spielen abwechselnd. „Nächster Spieler" in der Steuerleiste verwenden. Treffer werden automatisch dem aktuellen aktiven Spieler gutgeschrieben." },
+          { name: "Rundenbasiert", desc: `Spieler spielen abwechselnd. „Nächster Spieler" in der Steuerleiste verwenden. Treffer werden automatisch dem aktuellen aktiven Spieler gutgeschrieben.` },
           { name: "Zeitrunden", desc: "Jeder Spieler hat ein festes Zeitfenster (geplantes Feature)." },
         ],
         hint: "Spieler auf der Spieler-Seite hinzufügen, bevor eine Sitzung erstellt wird. Bis zu 8 Spieler pro Sitzung möglich.",
