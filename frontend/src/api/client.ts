@@ -11,4 +11,3 @@ export const api = axios.create({
 
 // Stream URL (MJPEG) — always relative so it works in both environments
 export const streamUrl = (): string => "/api/camera/stream";
-};
