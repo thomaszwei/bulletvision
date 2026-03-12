@@ -3,12 +3,12 @@ FROM node:20-alpine AS builder
 WORKDIR /app
 
 COPY package.json ./
-RUN npm install --include=dev
+RUN npm install
 
 COPY . .
 # Vite handles TS transpilation; cap heap for Raspberry Pi
 ENV NODE_OPTIONS=--max-old-space-size=768
-RUN npx --no-install vite build
+RUN ./node_modules/.bin/vite build
 
 # ── Stage 2: Serve with nginx ─────────────────────────────────────────────────
 FROM nginx:1.25-alpine AS production
