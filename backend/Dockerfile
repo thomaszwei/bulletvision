@@ -39,6 +39,8 @@ CMD ["uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "8000", "--reload
 FROM base AS production
 
 COPY app/ ./app/
+COPY alembic/ ./alembic/
+COPY alembic.ini .
 
 # Create data directories (will be overridden by volume mount on Pi)
 RUN mkdir -p /app/data/db /app/data/snapshots /app/data/demo
