@@ -5,7 +5,13 @@ set -e
 RETRIES=5
 SLEEP=5
 
-echo "Running alembic migrations (up to ${RETRIES} attempts)..."
+echo "Preparing data directories and running alembic migrations (up to ${RETRIES} attempts)..."
+
+# Ensure data directories exist (volume mounts may override image directory structure)
+mkdir -p /app/data/db /app/data/snapshots /app/data/snapshots/baselines /app/data/snapshots/frames
+# Make writable so sqlite can create files regardless of host UID/GID
+chmod -R 0777 /app/data || true
+
 count=0
 until [ "$count" -ge "$RETRIES" ]
 do
