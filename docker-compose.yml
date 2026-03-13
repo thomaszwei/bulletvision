@@ -20,7 +20,10 @@ services:
       - DATABASE_URL=sqlite:////app/data/db/bulletvision.db
       - DATA_DIR=/app/data
     volumes:
-      - ./data:/app/data
+      # Keep snapshots on the host for easy access, but put the DB in a named
+      # Docker volume to avoid host FS locking/permission issues (NFS/etc).
+      - ./data/snapshots:/app/data/snapshots
+      - db_data:/app/data/db
     # Pi camera device passthrough.
     # Adjust if your Pi uses a different device node.
     devices:
@@ -65,7 +68,9 @@ services:
       frontend:
         condition: service_started
 
-volumes: {}
+volumes:
+  db_data:
+    driver: local
 
 networks:
   default:
