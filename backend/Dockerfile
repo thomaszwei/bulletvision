@@ -41,12 +41,13 @@ FROM base AS production
 COPY app/ ./app/
 COPY alembic/ ./alembic/
 COPY alembic.ini .
+COPY entrypoint.sh ./entrypoint.sh
+RUN chmod +x ./entrypoint.sh
 
 # Create data directories (will be overridden by volume mount on Pi)
 RUN mkdir -p /app/data/db /app/data/snapshots /app/data/demo
 
 EXPOSE 8000
 
-# Run migrations then start server.
-# Migrations are idempotent — safe to run on every startup.
-CMD ["sh", "-c", "alembic upgrade head && uvicorn app.main:app --host 0.0.0.0 --port 8000 --workers 1"]
+# Run migrations (with retries) then start server.
+CMD ["/bin/sh", "./entrypoint.sh"]
