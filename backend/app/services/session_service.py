@@ -116,9 +116,41 @@ async def end_session(db: AsyncSession, session: Session) -> Session:
     return session
 
 
+async def switch_to_player(db: AsyncSession, session: Session, player_id: int) -> SessionPlayer:
+    """
+    Switch directly to a specific player by player_id.
+    Returns the activated SessionPlayer.
+    """
+    result = await db.execute(
+        select(SessionPlayer)
+        .where(SessionPlayer.session_id == session.id)
+    )
+    players = result.scalars().all()
+
+    target = next((sp for sp in players if sp.player_id == player_id), None)
+    if not target:
+        raise ValueError(f"Player {player_id} is not part of session {session.id}")
+
+    for sp in players:
+        sp.is_active = False
+    target.is_active = True
+    await db.flush()
+
+    from app.ws.manager import ws_manager
+    await ws_manager.broadcast_to_session(session.id, {
+        "type": "player_switched",
+        "data": {
+            "session_id": session.id,
+            "player_id": target.player_id,
+            "turn_order": target.turn_order,
+        },
+    })
+    return target
+
+
 async def switch_to_next_player(db: AsyncSession, session: Session) -> SessionPlayer | None:
     """
-    In turn-based mode: deactivate current player, activate the next in turn_order.
+    Cycle to the next player in turn_order (works for all modes).
     Returns the new active SessionPlayer, or None if no players.
     """
     result = await db.execute(

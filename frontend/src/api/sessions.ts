@@ -16,6 +16,8 @@ export const sessionsApi = {
     api.post<{ baseline_path: string }>(`/sessions/${id}/reset-baseline`).then((r) => r.data),
   end: (id: number) => api.post<Session>(`/sessions/${id}/end`).then((r) => r.data),
   nextPlayer: (id: number) => api.post(`/sessions/${id}/next-player`).then((r) => r.data),
+  switchToPlayer: (id: number, playerId: number) =>
+    api.post(`/sessions/${id}/switch-player`, { player_id: playerId }).then((r) => r.data),
   getDetections: (id: number, status?: string) =>
     api
       .get<Detection[]>(`/sessions/${id}/detections`, { params: status ? { status } : {} })

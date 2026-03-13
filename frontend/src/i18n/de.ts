@@ -103,6 +103,7 @@ const de = {
     startSession: "Sitzung starten",
     nextPlayer: "Nächster Spieler",
     activeBadge: "Aktiv",
+    clickToSwitch: "tippen zum Aktivieren",
   },
   highscores: {
     title: "Bestenliste",

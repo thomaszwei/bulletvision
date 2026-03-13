@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 from fastapi import APIRouter, Depends, HTTPException, status
+from pydantic import BaseModel
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm import selectinload
@@ -135,6 +136,21 @@ async def next_player(session_id: int, db: AsyncSession = Depends(get_db)):
     await db.commit()
     if not sp:
         return {"message": "No players in session"}
+    return {"active_player_id": sp.player_id, "turn_order": sp.turn_order}
+
+
+class SwitchPlayerBody(BaseModel):
+    player_id: int
+
+
+@router.post("/{session_id}/switch-player", response_model=dict)
+async def switch_player(session_id: int, body: SwitchPlayerBody, db: AsyncSession = Depends(get_db)):
+    s = await _get_session_or_404(session_id, db)
+    try:
+        sp = await session_service.switch_to_player(db, s, body.player_id)
+    except ValueError as exc:
+        raise HTTPException(status_code=400, detail=str(exc))
+    await db.commit()
     return {"active_player_id": sp.player_id, "turn_order": sp.turn_order}
 
 

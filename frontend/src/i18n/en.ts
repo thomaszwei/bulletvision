@@ -103,6 +103,7 @@ const en = {
     startSession: "Start Session",
     nextPlayer: "Next Player",
     activeBadge: "Active",
+    clickToSwitch: "tap to activate",
   },
   highscores: {
     title: "Highscores",

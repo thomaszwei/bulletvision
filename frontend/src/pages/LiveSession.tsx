@@ -1,6 +1,6 @@
 ﻿import { useState, useCallback, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
-import { Camera, RefreshCw, Target, UserCheck, Square, ChevronRight } from "lucide-react";
+import { Camera, RefreshCw, Target, UserCheck, Square, ChevronRight, Check, X } from "lucide-react";
 import { useSession, useSessionActions, useSessionDetections } from "@/hooks/useSession";
 import { useDetectionActions } from "@/hooks/useDetections";
 import { useDetectionStore } from "@/store/detectionStore";
@@ -192,8 +192,8 @@ function LiveSessionView({ sessionId }: { sessionId: number }) {
                   <RefreshCw size={14} /> {actions.resetBaseline.isPending ? t("session.resetting") : t("session.resetBaseline")}
                 </button>
               )}
-              {session.mode === "turnbased" && session.session_players.length > 1 && (
-                <button className="btn-ghost" onClick={() => actions.nextPlayer.mutate()}>
+              {session.session_players.length > 1 && (
+                <button className="btn-ghost" onClick={() => actions.nextPlayer.mutate()} disabled={actions.nextPlayer.isPending}>
                   <UserCheck size={14} /> {t("session.nextPlayer")}
                 </button>
               )}
@@ -208,9 +208,18 @@ function LiveSessionView({ sessionId }: { sessionId: number }) {
               {session.session_players.map((sp) => (
                 <li
                   key={sp.id}
+                  onClick={() => {
+                    if (!sp.is_active && session.status === "active") {
+                      actions.switchToPlayer.mutate(sp.player_id);
+                    }
+                  }}
                   className={cn(
-                    "flex items-center gap-3 p-2 rounded-lg",
-                    sp.is_active ? "bg-brand/10 border border-brand/30" : "bg-transparent"
+                    "flex items-center gap-3 p-2 rounded-lg transition-colors",
+                    sp.is_active
+                      ? "bg-brand/10 border border-brand/30"
+                      : session.status === "active"
+                        ? "bg-transparent hover:bg-surface-elevated cursor-pointer border border-transparent"
+                        : "bg-transparent border border-transparent"
                   )}
                 >
                   <div
@@ -221,7 +230,10 @@ function LiveSessionView({ sessionId }: { sessionId: number }) {
                   </div>
                   <div className="flex-1 min-w-0">
                     <p className="text-sm font-medium truncate">{sp.player.name}</p>
-                    {sp.is_active && <p className="text-xs text-brand">{t("session.activeBadge")}</p>}
+                    {sp.is_active
+                      ? <p className="text-xs text-brand">{t("session.activeBadge")}</p>
+                      : session.status === "active" && <p className="text-xs text-gray-500">{t("session.clickToSwitch")}</p>
+                    }
                   </div>
                   <span className="text-lg font-bold text-brand">{sp.score}</span>
                 </li>
@@ -280,8 +292,12 @@ function DetectionListItem({
         <p className="text-xs text-gray-500">{formatDate(d.detected_at)}</p>
       </div>
       <div className="flex gap-1 shrink-0">
-        <button onClick={onConfirm} className="px-2 py-1 bg-confirm/20 text-confirm text-xs rounded hover:bg-confirm/30 transition-colors">âœ“</button>
-        <button onClick={onReject} className="px-2 py-1 bg-accent/20 text-accent text-xs rounded hover:bg-accent/30 transition-colors">âœ•</button>
+        <button onClick={onConfirm} className="p-1.5 bg-confirm/20 text-confirm rounded hover:bg-confirm/30 transition-colors" title="Confirm">
+          <Check size={14} strokeWidth={2.5} />
+        </button>
+        <button onClick={onReject} className="p-1.5 bg-accent/20 text-accent rounded hover:bg-accent/30 transition-colors" title="Reject">
+          <X size={14} strokeWidth={2.5} />
+        </button>
       </div>
     </li>
   );

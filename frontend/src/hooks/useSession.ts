@@ -35,8 +35,9 @@ export function useSessionActions(sessionId: number) {
   const resetBaseline = useMutation({ mutationFn: () => sessionsApi.resetBaseline(sessionId), onSuccess: invalidate });
   const end = useMutation({ mutationFn: () => sessionsApi.end(sessionId), onSuccess: invalidate });
   const nextPlayer = useMutation({ mutationFn: () => sessionsApi.nextPlayer(sessionId), onSuccess: invalidate });
+  const switchToPlayer = useMutation({ mutationFn: (playerId: number) => sessionsApi.switchToPlayer(sessionId, playerId), onSuccess: invalidate });
 
-  return { start, baseline, resetBaseline, end, nextPlayer };
+  return { start, baseline, resetBaseline, end, nextPlayer, switchToPlayer };
 }
 
 export function useSessionDetections(sessionId: number) {
