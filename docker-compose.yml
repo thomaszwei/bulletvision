@@ -19,6 +19,7 @@ services:
     environment:
       - DATABASE_URL=sqlite:////app/data/db/bulletvision.db
       - DATA_DIR=/app/data
+      - DISABLE_MIGRATION=false
     volumes:
       # Keep snapshots on the host for easy access, but put the DB in a named
       # Docker volume to avoid host FS locking/permission issues (NFS/etc).
