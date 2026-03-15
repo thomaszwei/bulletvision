@@ -24,24 +24,19 @@ services:
       # Force IPA to run as isolated subprocess — avoids signature-check
       # failures when container and host libcamera versions differ slightly.
       - LIBCAMERA_IPA_FORCE_ISOLATION=1
-    # privileged gives the container access to all /dev/videoX, /dev/mediaX and
-    # VideoCore nodes that libcamera enumerates dynamically at runtime on Pi.
+    # privileged: true gives extra Linux capabilities.
+    # /dev:/dev mounts the FULL host /dev so libcamera can enumerate all
+    # /dev/videoX, /dev/mediaX and VideoCore ISP nodes dynamically.
+    # Listing individual devices is insufficient because the Pi camera
+    # pipeline spans /dev/media0, /dev/media1, /dev/video0–video13, etc.
     privileged: true
-    devices:
-      - /dev/video0:/dev/video0
-      - /dev/media0:/dev/media0
-      - /dev/vchiq:/dev/vchiq
-      - /dev/vcsm-cma:/dev/vcsm-cma
-    group_add:
-      - video
     volumes:
       # Keep snapshots on the host for easy access, but put the DB in a named
       # Docker volume to avoid host FS locking/permission issues (NFS/etc).
       - ./data/snapshots:/app/data/snapshots
       - db_data:/app/data/db
-      # NOTE: do NOT mount /usr/share/libcamera from the host — if the host
-      # directory is empty/missing it overwrites the container's IPA tuning
-      # files and libcamera will find 0 cameras.
+      # Full device tree — required for libcamera/picamera2 CSI camera access.
+      - /dev:/dev
     expose:
       - "8000"
     healthcheck:
