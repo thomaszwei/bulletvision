@@ -37,10 +37,11 @@ services:
       # Docker volume to avoid host FS locking/permission issues (NFS/etc).
       - ./data/snapshots:/app/data/snapshots
       - db_data:/app/data/db
-      # Camera access — all three mounts are required for libcamera in Docker
+      # Camera access — /dev and /run/udev are required for libcamera in Docker.
+      # Do NOT mount host IPA .so modules — they are version-matched to the host
+      # libcamera and will fail inside the container which has a different version.
       - /dev:/dev
       - /run/udev:/run/udev:ro
-      - /usr/lib/aarch64-linux-gnu/libcamera:/usr/lib/aarch64-linux-gnu/libcamera:ro
     expose:
       - "8000"
     healthcheck:
