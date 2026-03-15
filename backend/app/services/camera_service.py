@@ -116,8 +116,22 @@ class CameraService:
                 self._cap.set(cv2.CAP_PROP_FRAME_WIDTH, settings.camera_width)
                 self._cap.set(cv2.CAP_PROP_FRAME_HEIGHT, settings.camera_height)
                 self._cap.set(cv2.CAP_PROP_FPS, settings.detection_fps * 2)
-                self.available = True
-                logger.info(f"V4L2 camera opened: {settings.camera_device}")
+                # Do a test read to confirm we can actually get frames.
+                # CSI camera nodes (OV5647, IMX) opened via V4L2 report isOpened()=True
+                # but return False/None from read() because their raw Bayer format
+                # is not decodable by OpenCV without libcamera pipeline handling.
+                ret, test_frame = self._cap.read()
+                if ret and test_frame is not None:
+                    self.available = True
+                    logger.info(f"V4L2 camera opened and verified: {settings.camera_device}")
+                else:
+                    self._cap.release()
+                    self._cap = None
+                    logger.warning(
+                        f"V4L2 device {settings.camera_device} opened but produced no frames "
+                        "(likely a CSI camera node — only accessible via picamera2/libcamera). "
+                        "Camera unavailable."
+                    )
             else:
                 logger.warning("V4L2 camera not available. Frames will be blank.")
         except Exception as exc:
