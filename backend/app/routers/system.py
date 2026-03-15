@@ -46,7 +46,7 @@ def _read_cpu_temp() -> Optional[float]:
     return None
 
 
-@router.get("", response_model=SystemStats)
+@router.get("/stats", response_model=SystemStats)
 async def get_system_stats() -> SystemStats:
     """Return current system resource usage and camera stats."""
     from app.services.camera_service import camera_service

@@ -134,6 +134,7 @@ const en = {
     subtitle: "Detection, camera and scoring parameters",
     saving: "Saving…",
     saveError: "Failed to save settings. Please try again.",
+    saved: "Settings saved.",
     fields: {
       detection_confidence_threshold: { label: "Confidence Threshold", desc: "Minimum confidence to report a detection (0–1)" },
       detection_min_area: { label: "Min Contour Area (px²)", desc: "Smallest contour area counted as a hole" },

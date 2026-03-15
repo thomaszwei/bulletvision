@@ -64,6 +64,21 @@ vi.mock("@/api/camera", () => ({
     status: vi.fn().mockResolvedValue({ available: true, fps: 30, demo_mode: false }),
   },
 }));
+vi.mock("@/api/system", () => ({
+  systemApi: {
+    stats: vi.fn().mockResolvedValue({
+      cpu_percent: 12.5,
+      memory_percent: 45.0,
+      memory_used_mb: 921.6,
+      memory_total_mb: 2048.0,
+      cpu_temp_celsius: 52.3,
+      disk_percent: 33.0,
+      disk_used_gb: 5.28,
+      disk_total_gb: 16.0,
+      camera_fps: 5.0,
+    }),
+  },
+}));
 
 function wrap(ui: React.ReactElement) {
   const qc = new QueryClient({ defaultOptions: { queries: { retry: false } } });

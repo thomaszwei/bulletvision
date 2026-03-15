@@ -72,21 +72,17 @@ export function DetectionOverlay({
               strokeOpacity={d.status === "rejected" ? 0.4 : 0.9}
             />
 
-            {/* Center dot */}
-            <circle cx={px} cy={py} r={3} fill={color} fillOpacity={0.9} />
-
-            {/* Number badge — always visible, anchored above-left of ring */}
-            <rect
-              x={px - pr - 22} y={py - pr - 20}
-              width={22} height={18}
-              rx={4}
+            {/* Number badge — centered inside the ring so it's always within the viewport */}
+            <circle
+              cx={px} cy={py}
+              r={Math.min(Math.max(pr * 0.55, 10), 16)}
               fill={color}
-              fillOpacity={0.9}
+              fillOpacity={0.92}
             />
             <text
-              x={px - pr - 11} y={py - pr - 7}
+              x={px} y={py + 4}
               textAnchor="middle"
-              fontSize={11}
+              fontSize={Math.min(Math.max(pr * 0.45, 9), 13)}
               fill="#0F0F1A"
               fontFamily="Inter, sans-serif"
               fontWeight={700}

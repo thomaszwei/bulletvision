@@ -51,11 +51,15 @@ export default function Settings() {
     }
   }, [remote]); // eslint-disable-line react-hooks/exhaustive-deps
 
+  const [savedFlash, setSavedFlash] = useState(false);
+
   const saveMutation = useMutation({
     mutationFn: () => settingsApi.bulkUpdate(local),
     onSuccess: () => {
       qc.invalidateQueries({ queryKey: ["settings"] });
       setDirty(false);
+      setSavedFlash(true);
+      setTimeout(() => setSavedFlash(false), 2500);
     },
   });
 
@@ -105,6 +109,12 @@ export default function Settings() {
           ))}
         </div>
       ))}
+
+      {savedFlash && (
+        <div className="flex items-center gap-2 px-4 py-3 rounded-lg bg-confirm/10 border border-confirm/30 text-confirm text-sm font-medium">
+          <Save size={14} /> {t("common.save")} — {t("settings.saved")}
+        </div>
+      )}
 
       {saveMutation.isError && (
         <p className="text-accent text-sm">{t("settings.saveError")}</p>

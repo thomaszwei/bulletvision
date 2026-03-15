@@ -134,6 +134,7 @@ const de = {
     subtitle: "Erkennungs-, Kamera- und Punkteparameter",
     saving: "Speichert…",
     saveError: "Einstellungen konnten nicht gespeichert werden.",
+    saved: "Einstellungen gespeichert.",
     fields: {
       detection_confidence_threshold: { label: "Vertrauens-Schwellenwert", desc: "Mindestvertrauen für eine Erkennung (0–1)" },
       detection_min_area: { label: "Min. Konturbereich (px²)", desc: "Kleinster Konturbereich, der als Einschussloch gilt" },
