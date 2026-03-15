@@ -6,6 +6,26 @@
 # that picamera2 depends on. We use the official Python slim image (arm64-compatible).
 # ─────────────────────────────────────────────────────────────────────────────
 
+# ── Stage: pip-builder ────────────────────────────────────────────────────────
+# Install Python deps here (with build tools available) so that packages that
+# have no pre-built arm64 wheel (e.g. greenlet, httptools, uvloop) can compile
+# from source.  The compilers are NOT copied into the final image.
+FROM python:3.11-slim-bookworm AS pip-builder
+
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    build-essential \
+    python3-dev \
+    && rm -rf /var/lib/apt/lists/*
+
+WORKDIR /app
+COPY requirements.txt .
+
+# Install into an isolated venv so we can COPY the whole tree to the runtime stage.
+RUN python -m venv /venv \
+    && /venv/bin/pip install --no-cache-dir --upgrade pip \
+    && /venv/bin/pip install --no-cache-dir -r requirements.txt
+
+
 # ── Stage: base ──────────────────────────────────────────────────────────────
 FROM python:3.11-slim-bookworm AS base
 
@@ -49,14 +69,14 @@ RUN set -eux; \
         echo "Non-Pi arch ($ARCH): skipping libcamera/picamera2 install."; \
     fi
 
-# Expose apt-installed python3-picamera2 to Docker's /usr/local Python binary
+# Expose apt-installed python3-picamera2 to the venv Python binary
 ENV PYTHONPATH="/usr/lib/python3/dist-packages:${PYTHONPATH:-}"
 
-WORKDIR /app
+# Copy compiled Python packages from pip-builder and activate the venv.
+COPY --from=pip-builder /venv /venv
+ENV PATH="/venv/bin:$PATH"
 
-# Install Python deps first (layer cache-friendly)
-COPY requirements.txt .
-RUN pip install --no-cache-dir -r requirements.txt
+WORKDIR /app
 
 # ── Stage: development ───────────────────────────────────────────────────────
 FROM base AS development
