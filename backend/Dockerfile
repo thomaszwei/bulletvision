@@ -32,15 +32,16 @@ RUN set -eux; \
         apt-get update && apt-get install -y --no-install-recommends gnupg curl; \
         curl -fsSL https://archive.raspberrypi.org/debian/raspberrypi.gpg.key \
             | gpg --dearmor -o /usr/share/keyrings/raspberrypi-archive-keyring.gpg; \
-        echo "deb [signed-by=/usr/share/keyrings/raspberrypi-archive-keyring.gpg] \
-http://archive.raspberrypi.org/debian/ bookworm main" \
+        printf 'deb [signed-by=/usr/share/keyrings/raspberrypi-archive-keyring.gpg] http://archive.raspberrypi.org/debian/ bookworm main\n' \
             > /etc/apt/sources.list.d/raspi.list; \
-        apt-get update && apt-get install -y --no-install-recommends \
-            libcamera0 \
-            libcamera-ipa \
-            python3-libcamera \
+        apt-get update; \
+        # Install libcamera-apps (pulls libcamera0, libcamera-ipa, python3-libcamera,
+        # python3-kms++ as transitive deps) + picamera2 Python bindings.
+        # We don't list versioned soname packages (e.g. libcamera0.3.x) directly
+        # because their exact name varies by Pi OS release.
+        apt-get install -y --no-install-recommends \
+            libcamera-apps \
             python3-picamera2 \
-            python3-kms++ \
             python3-prctl \
             libatlas-base-dev; \
         rm -rf /var/lib/apt/lists/*; \
