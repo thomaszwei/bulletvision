@@ -126,7 +126,19 @@ class CameraService:
     def _open_picamera2(self) -> None:
         try:
             from picamera2 import Picamera2  # type: ignore[import]
-            self._picam2 = Picamera2()
+
+            # Log what libcamera can see before trying to open a specific index.
+            # An empty list here means IPA tuning files or device nodes are missing.
+            cameras = Picamera2.global_camera_info()
+            logger.info(f"libcamera detected {len(cameras)} camera(s): {cameras}")
+            if not cameras:
+                raise RuntimeError(
+                    "libcamera found no cameras. "
+                    "Check: ribbon cable, /dev/media* access, and that "
+                    "/usr/share/libcamera/ipa/* tuning files exist inside the container."
+                )
+
+            self._picam2 = Picamera2(0)
             config = self._picam2.create_video_configuration(
                 main={"size": (settings.camera_width, settings.camera_height), "format": "RGB888"}
             )

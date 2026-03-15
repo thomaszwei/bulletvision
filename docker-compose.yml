@@ -21,6 +21,9 @@ services:
       - DATA_DIR=/app/data
       - DISABLE_MIGRATION=false
       - CAMERA_BACKEND=PICAMERA2
+      # Force IPA to run as isolated subprocess — avoids signature-check
+      # failures when container and host libcamera versions differ slightly.
+      - LIBCAMERA_IPA_FORCE_ISOLATION=1
     # privileged gives the container access to all /dev/videoX, /dev/mediaX and
     # VideoCore nodes that libcamera enumerates dynamically at runtime on Pi.
     privileged: true
@@ -36,8 +39,9 @@ services:
       # Docker volume to avoid host FS locking/permission issues (NFS/etc).
       - ./data/snapshots:/app/data/snapshots
       - db_data:/app/data/db
-      # Mount host libcamera IPA pipeline handlers (sensor tuning files)
-      - /usr/share/libcamera:/usr/share/libcamera:ro
+      # NOTE: do NOT mount /usr/share/libcamera from the host — if the host
+      # directory is empty/missing it overwrites the container's IPA tuning
+      # files and libcamera will find 0 cameras.
     expose:
       - "8000"
     healthcheck:
