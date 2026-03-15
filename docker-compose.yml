@@ -20,21 +20,25 @@ services:
       - DATABASE_URL=sqlite:////app/data/db/bulletvision.db
       - DATA_DIR=/app/data
       - DISABLE_MIGRATION=false
+      - CAMERA_BACKEND=PICAMERA2
+    # privileged gives the container access to all /dev/videoX, /dev/mediaX and
+    # VideoCore nodes that libcamera enumerates dynamically at runtime on Pi.
+    privileged: true
+    devices:
+      - /dev/video0:/dev/video0
+      - /dev/media0:/dev/media0
+      - /dev/vchiq:/dev/vchiq
+      - /dev/vcsm-cma:/dev/vcsm-cma
+    group_add:
+      - video
+      - render
     volumes:
       # Keep snapshots on the host for easy access, but put the DB in a named
       # Docker volume to avoid host FS locking/permission issues (NFS/etc).
       - ./data/snapshots:/app/data/snapshots
       - db_data:/app/data/db
-    # Pi camera device passthrough.
-    # Adjust if your Pi uses a different device node.
-    devices:
-      - /dev/video0:/dev/video0
-      # Uncomment the lines below if using libcamera / picamera2 directly:
-      # - /dev/vcsm-cma:/dev/vcsm-cma
-      # - /dev/vchiq:/dev/vchiq
-      # - /dev/vcio:/dev/vcio
-    group_add:
-      - video
+      # Mount host libcamera IPA pipeline handlers (sensor tuning files)
+      - /usr/share/libcamera:/usr/share/libcamera:ro
     expose:
       - "8000"
     healthcheck:

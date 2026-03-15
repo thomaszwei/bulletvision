@@ -25,7 +25,8 @@ class Settings(BaseSettings):
     # ── Camera ───────────────────────────────────────────────────────────────
     demo_mode: bool = Field(default=False)
     camera_device: str = Field(default="/dev/video0")
-    camera_backend: str = Field(default="V4L2")  # V4L2 | PICAMERA2
+    # AUTO: auto-detect (prefers PICAMERA2 on Raspberry Pi), or set V4L2 | PICAMERA2
+    camera_backend: str = Field(default="AUTO")  # AUTO | V4L2 | PICAMERA2
     camera_width: int = Field(default=640)
     camera_height: int = Field(default=480)
     detection_fps: int = Field(default=3)

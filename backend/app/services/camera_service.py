@@ -83,6 +83,24 @@ class CameraService:
     def _open_camera(self) -> None:
         backend = settings.camera_backend.upper()
 
+        # AUTO mode: prefer picamera2 on Raspberry Pi if available
+        if backend == "AUTO":
+            try:
+                # Quick platform check: Raspberry Pi device-tree model
+                model_path = Path("/proc/device-tree/model")
+                if model_path.exists():
+                    model = model_path.read_text(errors="ignore")
+                    if "Raspberry" in model or "raspberry" in model:
+                        backend = "PICAMERA2"
+                # If picamera2 is importable, prefer it
+                if backend == "AUTO":
+                    import importlib
+
+                    if importlib.util.find_spec("picamera2") is not None:
+                        backend = "PICAMERA2"
+            except Exception:
+                backend = "V4L2"
+
         if backend == "PICAMERA2":
             self._open_picamera2()
         else:
