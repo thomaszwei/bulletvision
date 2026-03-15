@@ -31,7 +31,6 @@ services:
       - /dev/vcsm-cma:/dev/vcsm-cma
     group_add:
       - video
-      - render
     volumes:
       # Keep snapshots on the host for easy access, but put the DB in a named
       # Docker volume to avoid host FS locking/permission issues (NFS/etc).
