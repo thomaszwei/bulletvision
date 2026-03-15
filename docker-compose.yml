@@ -27,16 +27,20 @@ services:
     # privileged: true gives extra Linux capabilities.
     # /dev:/dev mounts the FULL host /dev so libcamera can enumerate all
     # /dev/videoX, /dev/mediaX and VideoCore ISP nodes dynamically.
-    # Listing individual devices is insufficient because the Pi camera
-    # pipeline spans /dev/media0, /dev/media1, /dev/video0–video13, etc.
+    # /run/udev is required so libcamera's camera enumerator can resolve
+    # device nodes — without it global_camera_info() returns [].
+    # Host IPA .so modules are bind-mounted to guarantee version consistency
+    # with the sensor tuning that works on the Pi host OS.
     privileged: true
     volumes:
       # Keep snapshots on the host for easy access, but put the DB in a named
       # Docker volume to avoid host FS locking/permission issues (NFS/etc).
       - ./data/snapshots:/app/data/snapshots
       - db_data:/app/data/db
-      # Full device tree — required for libcamera/picamera2 CSI camera access.
+      # Camera access — all three mounts are required for libcamera in Docker
       - /dev:/dev
+      - /run/udev:/run/udev:ro
+      - /usr/lib/aarch64-linux-gnu/libcamera:/usr/lib/aarch64-linux-gnu/libcamera:ro
     expose:
       - "8000"
     healthcheck:
