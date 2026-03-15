@@ -243,6 +243,16 @@ const de = {
       },
     },
   },
+  system: {
+    title: "System",
+    cpu: "CPU",
+    memory: "Arbeitsspeicher",
+    temperature: "Temperatur",
+    disk: "Festplatte",
+    cameraFps: "Kamera FPS",
+    na: "N/A",
+    loadingError: "Systemdaten nicht verfügbar",
+  },
 };
 
 export default de;

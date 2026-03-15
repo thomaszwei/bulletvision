@@ -42,12 +42,14 @@ export default function Settings() {
   const [local, setLocal] = useState<Record<string, string | number | boolean>>({});
   const [dirty, setDirty] = useState(false);
 
+  // Re-sync local state whenever the remote data actually changes (including
+  // when navigating back to the page with a fresh query result).
   useEffect(() => {
-    if (!isLoading) {
+    if (!isLoading && Object.keys(remote).length > 0) {
       setLocal(remote);
       setDirty(false);
     }
-  }, [isLoading]); // eslint-disable-line react-hooks/exhaustive-deps
+  }, [remote]); // eslint-disable-line react-hooks/exhaustive-deps
 
   const saveMutation = useMutation({
     mutationFn: () => settingsApi.bulkUpdate(local),

@@ -1,6 +1,5 @@
 import { useState } from "react";
 import type { Detection } from "@/types";
-import { cn } from "@/lib/utils";
 
 interface DetectionOverlayProps {
   detections: Detection[];
@@ -8,6 +7,8 @@ interface DetectionOverlayProps {
   frameHeight: number;
   onConfirm: (id: number) => void;
   onReject: (id: number) => void;
+  /** Maps detection.id → sequential display number (1-based) */
+  indexMap: Record<number, number>;
 }
 
 const STATUS_COLORS: Record<string, string> = {
@@ -22,6 +23,7 @@ export function DetectionOverlay({
   frameHeight,
   onConfirm,
   onReject,
+  indexMap,
 }: DetectionOverlayProps) {
   const [hovered, setHovered] = useState<number | null>(null);
 
@@ -38,6 +40,7 @@ export function DetectionOverlay({
         const color = STATUS_COLORS[d.status] ?? STATUS_COLORS.pending;
         const isHov = hovered === d.id;
         const isPending = d.status === "pending";
+        const num = indexMap[d.id] ?? "?";
 
         return (
           <g
@@ -72,24 +75,47 @@ export function DetectionOverlay({
             {/* Center dot */}
             <circle cx={px} cy={py} r={3} fill={color} fillOpacity={0.9} />
 
-            {/* Confidence badge */}
+            {/* Number badge — always visible, anchored above-left of ring */}
             <rect
-              x={px + pr + 6} y={py - 10}
-              width={44} height={18}
+              x={px - pr - 22} y={py - pr - 20}
+              width={22} height={18}
               rx={4}
-              fill="#0F0F1A"
-              fillOpacity={0.85}
+              fill={color}
+              fillOpacity={0.9}
             />
             <text
-              x={px + pr + 28} y={py + 2}
+              x={px - pr - 11} y={py - pr - 7}
               textAnchor="middle"
-              fontSize={10}
-              fill={color}
+              fontSize={11}
+              fill="#0F0F1A"
               fontFamily="Inter, sans-serif"
-              fontWeight={600}
+              fontWeight={700}
             >
-              {Math.round(d.confidence * 100)}%
+              {num}
             </text>
+
+            {/* Confidence badge — shown on hover */}
+            {isHov && (
+              <>
+                <rect
+                  x={px + pr + 6} y={py - 10}
+                  width={44} height={18}
+                  rx={4}
+                  fill="#0F0F1A"
+                  fillOpacity={0.85}
+                />
+                <text
+                  x={px + pr + 28} y={py + 2}
+                  textAnchor="middle"
+                  fontSize={10}
+                  fill={color}
+                  fontFamily="Inter, sans-serif"
+                  fontWeight={600}
+                >
+                  {Math.round(d.confidence * 100)}%
+                </text>
+              </>
+            )}
 
             {/* Confirm / Reject buttons (hover, pending only) */}
             {isPending && isHov && (

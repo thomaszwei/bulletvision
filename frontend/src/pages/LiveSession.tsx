@@ -128,6 +128,13 @@ function LiveSessionView({ sessionId }: { sessionId: number }) {
 
   const { detections, setDetections, addOrUpdate } = useDetectionStore();
 
+  // Sequential 1-based index per detection (ordered by id) — shared between
+  // the camera overlay and the sidebar panel so numbers always match.
+  const indexMap: Record<number, number> = {};
+  [...detections]
+    .sort((a, b) => a.id - b.id)
+    .forEach((d, i) => { indexMap[d.id] = i + 1; });
+
   useEffect(() => {
     if (initialDetections) setDetections(initialDetections);
   }, [initialDetections, setDetections]);
@@ -179,6 +186,7 @@ function LiveSessionView({ sessionId }: { sessionId: number }) {
             onConfirm={(id) => detectionActions.confirm.mutate(id)}
             onReject={(id) => detectionActions.reject.mutate(id)}
             hasBaseline={!!session.baseline_path}
+            indexMap={indexMap}
           />
 
           {session.status === "active" && (
@@ -256,6 +264,7 @@ function LiveSessionView({ sessionId }: { sessionId: number }) {
                   <DetectionListItem
                     key={d.id}
                     detection={d}
+                    index={indexMap[d.id] ?? 0}
                     onConfirm={() => detectionActions.confirm.mutate(d.id)}
                     onReject={() => detectionActions.reject.mutate(d.id)}
                   />
@@ -274,16 +283,17 @@ function LiveSessionView({ sessionId }: { sessionId: number }) {
 }
 
 function DetectionListItem({
-  detection: d, onConfirm, onReject,
+  detection: d, index, onConfirm, onReject,
 }: {
   detection: Detection;
+  index: number;
   onConfirm: () => void;
   onReject: () => void;
 }) {
   return (
     <li className="flex items-center gap-2 p-2 bg-surface-elevated rounded-lg">
-      <div className="shrink-0">
-        <span className="badge-pending">#{d.id}</span>
+      <div className="shrink-0 w-7 h-7 rounded-md bg-amber-500/20 border border-amber-500/40 flex items-center justify-center">
+        <span className="text-xs font-bold text-amber-400">{index}</span>
       </div>
       <div className="flex-1 min-w-0">
         <p className={`text-xs font-medium ${confidenceColor(d.confidence)}`}>

@@ -243,6 +243,16 @@ const en = {
       },
     },
   },
+  system: {
+    title: "System",
+    cpu: "CPU",
+    memory: "Memory",
+    temperature: "Temperature",
+    disk: "Disk",
+    cameraFps: "Camera FPS",
+    na: "N/A",
+    loadingError: "Could not load system stats",
+  },
 };
 
 export default en;

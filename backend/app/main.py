@@ -109,6 +109,9 @@ def create_app() -> FastAPI:
     app.include_router(calibration.router, prefix="/api/calibration", tags=["Calibration"])
     app.include_router(app_settings.router, prefix="/api/settings", tags=["Settings"])
 
+    from app.routers import system as system_router_mod
+    app.include_router(system_router_mod.router, prefix="/api/system", tags=["System"])
+
     # ── WebSocket ──────────────────────────────────────────────────────────────
     from app.ws.router import ws_router
     app.include_router(ws_router)

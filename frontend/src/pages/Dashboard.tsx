@@ -7,6 +7,7 @@ import { scoresApi } from "@/api/scores";
 import { cameraApi } from "@/api/camera";
 import { formatDate } from "@/lib/utils";
 import { useTranslation } from "react-i18next";
+import SystemStatsCard from "@/components/SystemStatsCard";
 
 export default function Dashboard() {
   const { t } = useTranslation();
@@ -108,6 +109,8 @@ export default function Dashboard() {
           </Link>
         </div>
       </div>
+
+      <SystemStatsCard />
     </div>
   );
 }

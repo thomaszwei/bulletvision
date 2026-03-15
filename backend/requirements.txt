@@ -29,6 +29,7 @@ Pillow==10.3.0
 python-dateutil==2.9.0
 httpx==0.27.0                    # async HTTP client (for health checks / demo)
 anyio==4.4.0
+psutil==5.9.8                    # system stats: CPU, memory, temperature
 
 # picamera2 is installed system-wide on Raspberry Pi OS (not via pip).
 # We do NOT include it here to keep the image cross-platform.

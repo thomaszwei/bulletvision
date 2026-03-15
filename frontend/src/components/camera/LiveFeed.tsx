@@ -10,9 +10,10 @@ interface LiveFeedProps {
   onConfirm: (id: number) => void;
   onReject: (id: number) => void;
   hasBaseline: boolean;
+  indexMap: Record<number, number>;
 }
 
-export function LiveFeed({ detections, onConfirm, onReject, hasBaseline }: LiveFeedProps) {
+export function LiveFeed({ detections, onConfirm, onReject, hasBaseline, indexMap }: LiveFeedProps) {
   const { t } = useTranslation();
   const containerRef = useRef<HTMLDivElement>(null);
   const [imgSize, setImgSize] = useState<{ w: number; h: number } | null>(null);
@@ -40,6 +41,7 @@ export function LiveFeed({ detections, onConfirm, onReject, hasBaseline }: LiveF
           frameHeight={imgSize.h}
           onConfirm={onConfirm}
           onReject={onReject}
+          indexMap={indexMap}
         />
       )}
 
