@@ -29,6 +29,10 @@ class Settings(BaseSettings):
     camera_backend: str = Field(default="AUTO")  # AUTO | V4L2 | PICAMERA2
     camera_width: int = Field(default=640)
     camera_height: int = Field(default=480)
+    # PI camera focus strategy for picamera2 backend: AUTO (single), CONTINUOUS, MANUAL, OFF
+    camera_autofocus_mode: str = Field(default="CONTINUOUS")
+    # Lens position only used when autofocus mode is MANUAL (camera-specific range, commonly ~0-32)
+    camera_lens_position: float = Field(default=0.0)
     detection_fps: int = Field(default=3)
 
     # ── CV detection defaults ─────────────────────────────────────────────────

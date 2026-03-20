@@ -98,6 +98,9 @@ export interface CameraStatus {
   height: number;
   demo_mode: boolean;
   backend: string;
+  focus_supported: boolean;
+  focus_mode: string;
+  focus_requested_mode: string;
 }
 
 export interface AppSettings {

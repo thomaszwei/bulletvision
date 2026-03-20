@@ -17,6 +17,9 @@ async def camera_status():
         "height": settings.camera_height,
         "demo_mode": settings.demo_mode,
         "backend": settings.camera_backend,
+        "focus_supported": camera_service.focus_supported,
+        "focus_mode": camera_service.focus_mode_applied,
+        "focus_requested_mode": settings.camera_autofocus_mode,
     }
 
 

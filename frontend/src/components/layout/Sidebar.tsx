@@ -30,12 +30,16 @@ export function Sidebar() {
   return (
     <aside className="hidden md:flex flex-col w-56 min-h-screen bg-surface-card border-r border-surface-border shrink-0">
       {/* Logo */}
-      <div className="flex items-center gap-2.5 px-5 py-5 border-b border-surface-border">
+      <Link
+        to="/"
+        aria-label="Go to dashboard"
+        className="flex items-center gap-2.5 px-5 py-5 border-b border-surface-border hover:bg-surface-elevated/40 transition-colors"
+      >
         <div className="w-8 h-8 rounded-lg bg-accent flex items-center justify-center shrink-0">
           <Crosshair size={18} />
         </div>
         <span className="font-bold text-base tracking-tight">BulletVision</span>
-      </div>
+      </Link>
 
       {/* Nav */}
       <nav className="flex-1 py-3 px-2 space-y-0.5">

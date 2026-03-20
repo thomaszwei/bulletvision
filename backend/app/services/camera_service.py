@@ -51,6 +51,10 @@ class CameraService:
         self._frame_count: int = 0
         self._fps_ts: float = 0.0
 
+        # Focus metadata (only meaningful for picamera2 devices that expose AF controls)
+        self.focus_supported: bool = False
+        self.focus_mode_applied: str = "unknown"
+
     # ── Lifecycle ─────────────────────────────────────────────────────────────
 
     async def start(self) -> None:
@@ -157,12 +161,60 @@ class CameraService:
                 main={"size": (settings.camera_width, settings.camera_height), "format": "RGB888"}
             )
             self._picam2.configure(config)
+            self._configure_picamera2_focus()
             self._picam2.start()
             self.available = True
             logger.info("picamera2 opened successfully.")
         except Exception as exc:
             logger.warning(f"picamera2 open failed ({exc}). Falling back to V4L2.")
             self._open_v4l2()
+
+    def _configure_picamera2_focus(self) -> None:
+        """
+        Configure autofocus for Pi Camera 3 when AF controls are exposed by libcamera.
+
+        Pi Camera Module 3 supports focus motors. We still set a mode explicitly so
+        behavior is deterministic across OS/libcamera versions and container images.
+        """
+        if not self._picam2:
+            return
+
+        requested_mode = settings.camera_autofocus_mode.strip().upper()
+        camera_controls = getattr(self._picam2, "camera_controls", {}) or {}
+        self.focus_supported = "AfMode" in camera_controls
+
+        if not self.focus_supported:
+            self.focus_mode_applied = "unsupported"
+            logger.info("Camera autofocus controls not exposed; using camera default focus behavior.")
+            return
+
+        try:
+            from libcamera import controls as libcamera_controls  # type: ignore[import]
+        except Exception as exc:
+            self.focus_mode_applied = "unconfigured"
+            logger.warning(f"Autofocus controls available but libcamera controls import failed: {exc}")
+            return
+
+        af_modes = {
+            "AUTO": libcamera_controls.AfModeEnum.Auto,
+            "CONTINUOUS": libcamera_controls.AfModeEnum.Continuous,
+            "MANUAL": libcamera_controls.AfModeEnum.Manual,
+            "OFF": libcamera_controls.AfModeEnum.Manual,
+        }
+        selected = af_modes.get(requested_mode, libcamera_controls.AfModeEnum.Continuous)
+        controls_payload: dict[str, object] = {"AfMode": selected}
+
+        if requested_mode in {"MANUAL", "OFF"}:
+            controls_payload["LensPosition"] = settings.camera_lens_position
+        elif requested_mode == "AUTO":
+            controls_payload["AfTrigger"] = libcamera_controls.AfTriggerEnum.Start
+
+        self._picam2.set_controls(controls_payload)
+        self.focus_mode_applied = requested_mode if requested_mode in af_modes else "CONTINUOUS"
+        logger.info(
+            "Configured camera focus mode: "
+            f"requested={requested_mode} applied={self.focus_mode_applied} supported={self.focus_supported}"
+        )
 
     async def _load_demo_frames(self) -> None:
         demo_dir = Path(settings.data_dir) / "demo"

@@ -11,6 +11,7 @@ import React from "react";
 import { render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import { MemoryRouter } from "react-router-dom";
 import { vi, describe, it, expect, beforeEach } from "vitest";
 import { Navbar } from "@/components/layout/Navbar";
 
@@ -40,13 +41,27 @@ vi.mock("react-i18next", () => ({
 
 vi.mock("@/api/camera", () => ({
   cameraApi: {
-    status: vi.fn().mockResolvedValue({ available: true, fps: 30, demo_mode: false }),
+    status: vi.fn().mockResolvedValue({
+      available: true,
+      fps: 30,
+      demo_mode: false,
+      backend: "AUTO",
+      width: 640,
+      height: 480,
+      focus_supported: true,
+      focus_mode: "CONTINUOUS",
+      focus_requested_mode: "CONTINUOUS",
+    }),
   },
 }));
 
 function wrap(ui: React.ReactElement) {
   const qc = new QueryClient({ defaultOptions: { queries: { retry: false } } });
-  return render(<QueryClientProvider client={qc}>{ui}</QueryClientProvider>);
+  return render(
+    <QueryClientProvider client={qc}>
+      <MemoryRouter>{ui}</MemoryRouter>
+    </QueryClientProvider>,
+  );
 }
 
 describe("Navbar – language switcher", () => {
@@ -60,6 +75,11 @@ describe("Navbar – language switcher", () => {
     wrap(<Navbar />);
     // When English is active the button offers to switch to German
     expect(screen.getByRole("button", { name: /DE/i })).toBeInTheDocument();
+  });
+
+  it("renders a logo link to the dashboard", () => {
+    wrap(<Navbar />);
+    expect(screen.getByRole("link", { name: /Go to dashboard/i })).toHaveAttribute("href", "/");
   });
 
   it("calls changeLanguage('de') when active language is English", async () => {

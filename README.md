@@ -47,6 +47,8 @@ docker compose -f docker-compose.yml -f docker-compose.dev.yml up --build
 |---|---|---|
 | `SECRET_KEY` | `changeme` | Used for session signing |
 | `CAMERA_BACKEND` | `v4l2` | `v4l2` / `picamera2` / `demo` |
+| `CAMERA_AUTOFOCUS_MODE` | `CONTINUOUS` | `AUTO` / `CONTINUOUS` / `MANUAL` / `OFF` (picamera2 only) |
+| `CAMERA_LENS_POSITION` | `0.0` | Manual lens position when autofocus mode is `MANUAL` |
 | `DEMO_MODE` | `false` | Synthetic frames (no camera) |
 | `DETECTION_FPS` | `3` | CV pipeline frames per second |
 | `CAMERA_DEVICE` | `/dev/video0` | V4L2 device path |
@@ -134,6 +136,9 @@ bulletvision/
 
 ### Raspberry Pi Camera (CSI)
 Set `CAMERA_BACKEND=picamera2` in `.env`. Ensure `libcamera` is available on the Pi (pre-installed on Raspberry Pi OS Bookworm).
+
+For Camera Module 3 autofocus, BulletVision configures focus explicitly on startup. Default mode is `CONTINUOUS`, so no manual code changes are required for normal use.
+Use `CAMERA_AUTOFOCUS_MODE=MANUAL` with `CAMERA_LENS_POSITION` only if you want a fixed focus distance.
 
 ### USB Webcam / V4L2
 Set `CAMERA_BACKEND=v4l2`. The device is passed through to the container in `docker-compose.yml`:

@@ -3,6 +3,7 @@ import { cameraApi } from "@/api/camera";
 import { cn } from "@/lib/utils";
 import { Wifi, WifiOff } from "lucide-react";
 import { useTranslation } from "react-i18next";
+import { Link } from "react-router-dom";
 
 export function Navbar() {
   const { t, i18n } = useTranslation();
@@ -19,11 +20,14 @@ export function Navbar() {
   };
 
   const isDE = (i18n.resolvedLanguage ?? i18n.language).startsWith("de");
+  const statusDetails = `backend=${camStatus?.backend ?? "unknown"} focus=${camStatus?.focus_mode ?? "unknown"}`;
 
   return (
     <header className="flex items-center justify-between h-14 px-5 border-b border-surface-border bg-surface-card shrink-0">
       {/* Mobile title */}
-      <span className="md:hidden font-bold text-sm">BulletVision</span>
+      <Link to="/" aria-label="Go to dashboard" className="md:hidden font-bold text-sm hover:text-brand transition-colors">
+        BulletVision
+      </Link>
       <div className="hidden md:block" />
 
       <div className="flex items-center gap-3">
@@ -35,6 +39,7 @@ export function Navbar() {
               ? "bg-confirm/10 text-confirm"
               : "bg-accent/10 text-accent"
           )}
+          title={statusDetails}
         >
           {camStatus?.available ? <Wifi size={12} /> : <WifiOff size={12} />}
           {camStatus?.available

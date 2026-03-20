@@ -61,7 +61,17 @@ vi.mock("@/api/scores", () => ({
 }));
 vi.mock("@/api/camera", () => ({
   cameraApi: {
-    status: vi.fn().mockResolvedValue({ available: true, fps: 30, demo_mode: false }),
+    status: vi.fn().mockResolvedValue({
+      available: true,
+      fps: 30,
+      demo_mode: false,
+      backend: "AUTO",
+      width: 640,
+      height: 480,
+      focus_supported: true,
+      focus_mode: "CONTINUOUS",
+      focus_requested_mode: "CONTINUOUS",
+    }),
   },
 }));
 vi.mock("@/api/system", () => ({
